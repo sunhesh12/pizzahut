@@ -11,6 +11,7 @@ import { ShoppingCart, Trash2, Plus, Minus, Pizza, ShoppingBag } from "lucide-re
 import { useCart } from "@/hooks/use-cart";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "@inertiajs/react";
 
 export function CartSheet() {
@@ -43,8 +44,8 @@ export function CartSheet() {
                         <ScrollArea className="h-full pr-4">
                             <div className="space-y-6">
                                 {items.map((item) => (
-                                    <div key={item.id} className="flex gap-4 group animate-in fade-in slide-in-from-right-4 duration-300">
-                                        <div className="relative aspect-square h-20 w-20 overflow-hidden rounded-xl bg-muted border-2 border-muted-foreground/10 group-hover:border-[#EE1922]/30 transition-colors">
+                                    <div key={item.cartKey || item.id} className="flex gap-4 p-4 rounded-2xl bg-white dark:bg-black/40 border border-[#EE1922]/5 hover:border-[#EE1922]/20 transition-all shadow-sm group">
+                                        <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
                                             {item.image_path ? (
                                                 <img src={item.image_path} alt={item.name} className="h-full w-full object-cover" />
                                             ) : (
@@ -57,24 +58,35 @@ export function CartSheet() {
                                             <div className="flex justify-between items-start">
                                                 <div>
                                                     <h4 className="font-black italic text-[#EE1922] uppercase tracking-tight">{item.name}</h4>
-                                                    <p className="text-xs font-bold text-muted-foreground uppercase opacity-60">Hand-Tossed Classic</p>
+                                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                                        {item.size && (
+                                                            <Badge variant="outline" className="text-[9px] h-4 py-0 px-1 border-[#EE1922]/20 text-[#EE1922] font-black uppercase italic">
+                                                                {item.size}
+                                                            </Badge>
+                                                        )}
+                                                        {item.toppings?.map((topping, i) => (
+                                                            <Badge key={i} variant="outline" className="text-[9px] h-4 py-0 px-1 border-[#F8B803]/30 text-[#F8B803] font-black uppercase italic">
+                                                                +{topping}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
                                                     className="h-8 w-8 text-muted-foreground/30 hover:text-red-500 hover:bg-red-50"
-                                                    onClick={() => removeItem(item.id)}
+                                                    onClick={() => removeItem(item.cartKey || String(item.id))}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <div className="flex items-center justify-between mt-2">
-                                                <div className="flex items-center border-2 border-[#EE1922]/10 rounded-lg bg-white overflow-hidden shadow-sm">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center overflow-hidden rounded-lg border border-[#EE1922]/10 bg-[#EE1922]/5 p-0.5">
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
                                                         className="h-8 w-8 rounded-none hover:bg-[#EE1922]/5"
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        onClick={() => updateQuantity(String(item.cartKey || item.id), item.quantity - 1)}
                                                     >
                                                         <Minus className="h-3 w-3" />
                                                     </Button>
@@ -83,7 +95,7 @@ export function CartSheet() {
                                                         variant="ghost"
                                                         size="icon"
                                                         className="h-8 w-8 rounded-none hover:bg-[#EE1922]/5"
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        onClick={() => updateQuantity(String(item.cartKey || item.id), item.quantity + 1)}
                                                     >
                                                         <Plus className="h-3 w-3" />
                                                     </Button>

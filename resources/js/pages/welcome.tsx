@@ -1,10 +1,12 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { dashboard, login, register } from '@/routes';
+import { dashboard, login, logout, register } from '@/routes';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CartSheet } from '@/components/cart-sheet';
 import { useCart } from '@/hooks/use-cart';
+import { PizzaCustomizer } from '@/components/pizza-customizer';
+import { useState } from 'react';
 
 interface Product {
     id: number;
@@ -25,6 +27,8 @@ export default function Welcome({
 }) {
     const { auth } = usePage().props;
     const { addItem } = useCart();
+    const [selectedPizza, setSelectedPizza] = useState<any>(null);
+    const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
 
     // Featured pizzas calculated from database products or fallback to hero items
     const featuredPizzas = products.length > 0 ? products.map(p => ({
@@ -45,22 +49,22 @@ export default function Welcome({
         },
     ];
 
-    const handleAddToCart = (pizza: any) => {
+    const handleAddToCartClick = (pizza: any) => {
         if (!auth.user) {
             window.location.href = login().url;
             return;
         }
-
-        addItem({
-            id: pizza.id,
-            name: pizza.title,
-            price: pizza.price.replace('$', ''),
-            image_path: pizza.image
-        });
+        setSelectedPizza(pizza);
+        setIsCustomizerOpen(true);
     };
 
     return (
         <div className="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] dark:text-[#EDEDEC]">
+            <PizzaCustomizer
+                pizza={selectedPizza}
+                isOpen={isCustomizerOpen}
+                onClose={() => setIsCustomizerOpen(false)}
+            />
             <Head title="Welcome to PizzaHut">
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
@@ -81,15 +85,20 @@ export default function Welcome({
                     <div className="flex gap-4 items-center">
                         <CartSheet />
                         {auth.user ? (
-                            auth.user.role === 'Customer' ? (
-                                <Link href="/">
-                                    <Button variant="outline">Home</Button>
+                            <div className="flex gap-2 items-center">
+                                {auth.user.role === 'Customer' ? (
+                                    <Link href="/">
+                                        <Button variant="outline">Home</Button>
+                                    </Link>
+                                ) : (
+                                    <Link href={dashboard()}>
+                                        <Button variant="outline">Dashboard</Button>
+                                    </Link>
+                                )}
+                                <Link href={logout().url} method="post" as="button">
+                                    <Button variant="ghost" className="text-muted-foreground hover:text-[#EE1922]">Logout</Button>
                                 </Link>
-                            ) : (
-                                <Link href={dashboard()}>
-                                    <Button variant="outline">Dashboard</Button>
-                                </Link>
-                            )
+                            </div>
                         ) : (
                             <>
                                 <Link href={login()}>
@@ -164,7 +173,7 @@ export default function Welcome({
                             <CardFooter>
                                 <Button
                                     className="w-full bg-[#EE1922] hover:bg-[#D0161D]"
-                                    onClick={() => handleAddToCart(pizza)}
+                                    onClick={() => handleAddToCartClick(pizza)}
                                 >
                                     Add to Cart
                                 </Button>

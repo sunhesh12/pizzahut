@@ -41,6 +41,16 @@ const mainNavItems: NavItem[] = [
         icon: Pizza,
     },
     {
+        title: 'Pizza Sizes',
+        href: '/pizza-sizes',
+        icon: Pizza,
+    },
+    {
+        title: 'Toppings',
+        href: '/toppings',
+        icon: Pizza,
+    },
+    {
         title: 'Customers',
         href: '/customers',
         icon: Users,

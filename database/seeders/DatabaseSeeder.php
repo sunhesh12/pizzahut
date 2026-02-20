@@ -101,5 +101,21 @@ class DatabaseSeeder extends Seeder
         foreach ($customers as $c) {
             \App\Models\Customer::firstOrCreate(['email' => $c['email']], $c);
         }
+        // Seed Sizes
+        \App\Models\PizzaSize::insert([
+            ['name' => 'Personal', 'price_modifier' => 0.00, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Medium', 'price_modifier' => 4.00, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Large', 'price_modifier' => 8.00, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        // Seed Toppings
+        \App\Models\Topping::insert([
+            ['name' => 'Extra Cheese', 'price' => 2.00, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Mushrooms', 'price' => 1.50, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Onions', 'price' => 1.00, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Green Peppers', 'price' => 1.00, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Black Olives', 'price' => 1.50, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Pepperoni', 'price' => 2.50, 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 }

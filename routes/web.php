@@ -12,6 +12,8 @@ Route::get('/', function () {
             ->orderBy('created_at', 'desc')
             ->take(6)
             ->get(),
+        'pizzaSizes' => \App\Models\PizzaSize::where('is_available', true)->get(),
+        'toppings' => \App\Models\Topping::where('is_available', true)->get(),
     ]);
 })->name('home');
 
@@ -21,6 +23,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin, Manager, and Chef can manage products
     Route::middleware(['role:Admin,Manager,Chef'])->group(function () {
         Route::resource('products', App\Http\Controllers\ProductController::class);
+        Route::resource('pizza-sizes', App\Http\Controllers\PizzaSizeController::class);
+        Route::resource('toppings', App\Http\Controllers\ToppingController::class);
     });
 
     // Admin, Manager, and Receptionist can manage customers

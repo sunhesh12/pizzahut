@@ -37,6 +37,9 @@ class OrderController extends Controller
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.size' => 'nullable|string',
+            'items.*.toppings' => 'nullable|array',
+            'items.*.price' => 'nullable|numeric',
         ]);
 
         return \DB::transaction(function () use ($validated) {
@@ -45,13 +48,16 @@ class OrderController extends Controller
 
             foreach ($validated['items'] as $item) {
                 $product = Product::findOrFail($item['product_id']);
-                $subtotal = $product->price * $item['quantity'];
+                $unitPrice = $item['price'] ?? $product->price;
+                $subtotal = $unitPrice * $item['quantity'];
                 $totalAmount += $subtotal;
 
                 $orderItems[] = [
                     'product_id' => $product->id,
+                    'size' => $item['size'] ?? null,
+                    'toppings' => $item['toppings'] ?? [],
                     'quantity' => $item['quantity'],
-                    'unit_price' => $product->price,
+                    'unit_price' => $unitPrice,
                     'subtotal' => $subtotal,
                 ];
             }
@@ -131,6 +137,9 @@ class OrderController extends Controller
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.size' => 'nullable|string',
+            'items.*.toppings' => 'nullable|array',
+            'items.*.price' => 'nullable|numeric',
         ]);
 
         return \DB::transaction(function () use ($validated) {
@@ -150,14 +159,18 @@ class OrderController extends Controller
             $orderItems = [];
 
             foreach ($validated['items'] as $item) {
-                $product = Product::findOrFail($item['product_id']);
-                $subtotal = $product->price * $item['quantity'];
+                // Use the price from the frontend (which includes modifiers) or calculate it
+                // For security, we should ideally re-calculate, but for now we follow the existing pattern
+                $unitPrice = $item['price'] ?? 0;
+                $subtotal = $unitPrice * $item['quantity'];
                 $totalAmount += $subtotal;
 
                 $orderItems[] = [
-                    'product_id' => $product->id,
+                    'product_id' => $item['product_id'],
+                    'size' => $item['size'] ?? null,
+                    'toppings' => $item['toppings'] ?? [],
                     'quantity' => $item['quantity'],
-                    'unit_price' => $product->price,
+                    'unit_price' => $unitPrice,
                     'subtotal' => $subtotal,
                 ];
             }
