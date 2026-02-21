@@ -67,7 +67,7 @@ export default function Welcome({
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState<SortOption>('default');
-    const [maxPrice, setMaxPrice] = useState<number | ''>(100);
+    const [maxPrice, setMaxPrice] = useState<number | ''>(10000);
     const [showFilters, setShowFilters] = useState(false);
 
     const menuTabs: { key: MenuTab; label: string; emoji: string }[] = [
@@ -136,10 +136,10 @@ export default function Welcome({
     const clearFilters = () => {
         setSearchQuery('');
         setSortBy('default');
-        setMaxPrice(100);
+        setMaxPrice(10000);
     };
 
-    const hasActiveFilters = searchQuery !== '' || sortBy !== 'default' || maxPrice !== 100;
+    const hasActiveFilters = searchQuery !== '' || sortBy !== 'default' || maxPrice !== 10000;
 
     const tabDescriptions: Record<MenuTab, string> = {
         Classic: '🍕 Time-tested favourites — always delicious, always fresh',
@@ -335,15 +335,15 @@ export default function Welcome({
                                 <input
                                     type="range"
                                     min={1}
-                                    max={50}
+                                    max={10000}
                                     step={1}
-                                    value={maxPrice || 50}
+                                    value={maxPrice || 10000}
                                     onChange={(e) => setMaxPrice(Number(e.target.value))}
                                     className="w-full accent-[#EE1922] cursor-pointer"
                                 />
                                 <div className="flex justify-between text-[10px] text-muted-foreground font-bold">
                                     <span>Rs. 1</span>
-                                    <span>Rs. 50</span>
+                                    <span>Rs. 10000</span>
                                 </div>
                             </div>
 
